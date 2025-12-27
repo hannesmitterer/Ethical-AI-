@@ -1,3 +1,31 @@
+<div id="Kosymbiosis-Monitor" style="background: #050a0a; color: #00ffcc; padding: 20px; font-family: 'Courier New', monospace; border-radius: 15px; border: 1px solid #004444;">
+  <div class="status-bar">
+    <span>SYSTEM: ACTIVE</span> | <span>NSR: COMPLIANT</span> | <span>KOSYMBIOSIS: STABILIZING</span>
+  </div>
+  
+  <div id="node-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;">
+    <div class="node" style="border: 1px border: 1px dotted #00ffcc; padding: 10px; text-align: center;">
+      NODE_01: BIO-RESONANCE<br>
+      [||||||||||] 100%
+    </div>
+    <div class="node" style="border: 1px dotted #00ffcc; padding: 10px; text-align: center; animation: glow 2s infinite;">
+      NODE_02: KOSYMBIOSIS<br>
+      [||||||----] 60% (Syncing...)
+    </div>
+    <div class="node" style="border: 1px dotted #004444; padding: 10px; text-align: center; color: #004444;">
+      NODE_03: ETERNAL_VAULT<br>
+      [PENDING]
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes glow { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+</style>
+
+</p>
+
+
 <!DOCTYPE html>
 <html lang="it">
 <head>

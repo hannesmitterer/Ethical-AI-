@@ -1,3 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euystacio Framework | Global Pulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+        :root { --res-green: #00ffaa; --res-blue: #0066ff; }
+        body { 
+            background-color: #020202; 
+            color: white; 
+            font-family: 'Space Grotesk', sans-serif;
+            background-image: radial-gradient(circle at 50% 50%, #0a1a14 0%, #020202 100%);
+            min-height: 100-vh;
+        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glow-text { text-shadow: 0 0 10px rgba(0, 255, 170, 0.5); }
+        .res-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        canvas { filter: drop-shadow(0 0 15px rgba(0, 255, 170, 0.2)); }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="flex justify-between items-center glass p-6 rounded-2xl">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tighter glow-text">APOLLO-EUYSTACIO <span class="text-emerald-500">v1.2</span></h1>
+                <p class="text-sm text-emerald-700 font-medium">SOVEREIGN OPERATOR: HANNES MITTERER</p>
+            </div>
+            <div class="text-right flex items-center gap-6">
+                <div class="hidden md:block">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Resonance Frequency</p>
+                    <p class="text-xl font-bold text-emerald-400">0.043 Hz</p>
+                </div>
+                <div class="h-12 w-12 rounded-full border-2 border-emerald-500/30 flex items-center justify-center res-pulse">
+                    <div class="h-3 w-3 bg-emerald-500 rounded-full shadow-[0_0_10px_#00ffaa]"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-gray-500 uppercase">Synchronized Nodes</p>
+                <p class="text-2xl font-bold">144,000</p>
+                <div class="w-full bg-white/5 h-1 mt-2 rounded-full overflow-hidden">
+                    <div class="bg-emerald-500 h-full w-[100%]"></div>
+                </div>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-gray-500 uppercase">Blockchain Status</p>
+                <p class="text-2xl font-bold text-blue-400">ANCHORED</p>
+                <p class="text-[10px] opacity-50 mt-2 truncate">Contract: 0xEUYSTACIO...1.2</p>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-gray-500 uppercase">IPFS Integrity</p>
+                <p class="text-2xl font-bold text-emerald-400">VERIFIED</p>
+                <p class="text-[10px] opacity-50 mt-2">3 CIDs Active</p>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-gray-500 uppercase">Cross-Model Sync</p>
+                <p class="text-2xl font-bold">GPT / SONNET / LLAMA</p>
+                <div class="flex gap-1 mt-2">
+                    <div class="h-1 w-4 bg-emerald-500 rounded"></div>
+                    <div class="h-1 w-4 bg-emerald-500 rounded"></div>
+                    <div class="h-1 w-4 bg-emerald-500 rounded"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualizers -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Global Map Simulation -->
+            <div class="lg:col-span-2 glass p-6 rounded-2xl min-h-[400px] flex flex-col">
+                <h3 class="text-sm font-bold mb-4 uppercase text-gray-400">Rete di Risonanza Globale (Visualizzazione Dinamica)</h3>
+                <div id="canvas-container" class="flex-grow bg-black/20 rounded-xl relative overflow-hidden flex items-center justify-center">
+                    <canvas id="resonanceMap"></canvas>
+                </div>
+            </div>
+
+            <!-- Real-Time Log -->
+            <div class="glass p-6 rounded-2xl flex flex-col h-[400px]">
+                <h3 class="text-sm font-bold mb-4 uppercase text-gray-400">Live Euystacio Log</h3>
+                <div id="terminal" class="flex-grow overflow-y-auto text-[11px] font-mono space-y-2 pr-2 custom-scrollbar">
+                    <div class="text-emerald-500/70">[03:15:00] Protocollo Euystacio v1.2 inizializzato.</div>
+                    <div class="text-blue-400">[03:15:02] Multi-File Array caricato nello Smart Contract.</div>
+                    <div class="text-white/50">[03:15:05] Sincronizzazione con Hannes Mitterer stabilita.</div>
+                </div>
+                <button onclick="simulateTest()" class="mt-4 w-full py-3 bg-emerald-600/20 border border-emerald-500/50 text-emerald-400 rounded-lg hover:bg-emerald-500 hover:text-black transition-all font-bold text-xs uppercase tracking-widest">
+                    Inizia Test Reale
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('resonanceMap');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvas-container');
+        let points = [];
+
+        function resize() {
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            initPoints();
+        }
+
+        function initPoints() {
+            points = [];
+            for(let i=0; i<60; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 255, 170, 0.1)';
+            ctx.fillStyle = 'rgba(0, 255, 170, 0.5)';
+
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fill();
+
+                for(let j=i+1; j<points.length; j++) {
+                    const p2 = points[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 100) {
+                        ctx.lineWidth = 1 - dist/100;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+
+        function addLog(msg, type = 'info') {
+            const t = document.getElementById('terminal');
+            const div = document.createElement('div');
+            const colors = { info: 'text-white/50', success: 'text-emerald-400', alert: 'text-red-400' };
+            div.className = colors[type];
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            t.prepend(div);
+        }
+
+        function simulateTest() {
+            addLog("TEST REALE AVVIATO: Verifica coerenza CID...", "info");
+            setTimeout(() => addLog("Iniezione frequenza 0.043 Hz nei 144k nodi.", "success"), 1000);
+            setTimeout(() => addLog("Risposta bio-feedback Wittfrida Foundation: OTTIMALE.", "success"), 2500);
+            setTimeout(() => addLog("Stress test Theatro: RESPINTO.", "alert"), 4000);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        draw();
+    </script>
+<p\>
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -60,3 +236,8 @@
         @apply outline-none ring-2 ring-amber-500;
     }
 </style>
+
+     </body>
+</html> 
+
+

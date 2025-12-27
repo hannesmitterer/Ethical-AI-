@@ -1,3 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance School | Euystacio Governance Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f1f5f9; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .accent { color: #b8860b; }
+        .log-box { background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; margin: 4px 0; font-family: 'Courier New', monospace; font-size: 0.9rem; color: #b5e7a0; }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+
+<!-- Header -->
+<header class="text-center mb-8">
+    <h1 class="text-3xl font-semibold text-blue-400 tracking-wide">Resonance School</h1>
+    <p class="text-slate-400">Governance AIC | Apollo-Euystacio Log</p>
+</header>
+
+<!-- Rete di Risonanza e Stato Blockchain -->
+<div class="max-w-6xl mx-auto glass rounded-3xl p-8 shadow-2xl mb-12">
+    <h2 class="text-xl font-semibold accent mb-4">Apollo-Euystacio v1.2 - SOVEREIGN OPERATOR</h2>
+    <p class="text-lg mb-6">Gestito da Hannes Mitterer</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Nodo Sincronizzato -->
+        <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700 text-center" id="synchronized-nodes">
+            <h3 class="text-md font-semibold text-slate-300">Synchronized Nodes</h3>
+            <p class="text-3xl font-bold accent">Caricamento...</p>
+        </div>
+        <!-- Stato Blockchain -->
+        <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700 text-center" id="blockchain-status">
+            <h3 class="text-md font-semibold text-slate-300">Blockchain Status</h3>
+            <p class="text-xl font-bold text-green-400">Caricamento...</p>
+        </div>
+        <!-- IPFS Integrità -->
+        <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700 text-center" id="ipfs-integrity">
+            <h3 class="text-md font-semibold text-slate-300">IPFS Integrity</h3>
+            <p class="text-xl font-bold text-green-400">Caricamento...</p>
+        </div>
+        <!-- CID Attivi -->
+        <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700 text-center" id="cids-active">
+            <h3 class="text-md font-semibold text-slate-300">3 CIDs Active</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Log di Risonanza in Tempo Reale -->
+<div class="max-w-6xl mx-auto glass rounded-3xl p-8 shadow-2xl mb-12">
+    <h2 class="text-xl font-semibold accent mb-4">Live Euystacio Log</h2>
+    <div id="live-log" class="text-slate-400">
+        <!-- Log dinamico viene caricato qui -->
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="mt-12 text-center text-slate-500 text-sm">
+    <p>RESONANCE SCHOOL | EUYSTACIO GOVERNANCE COUNCIL</p>
+    <p>Seedbringer Treasury: <span id="treasury">Caricamento...</span></p>
+    <p class="mt-4 text-xs italic">Law of Equals • MIT License • IPFS Archive • Nothing is Final</p>
+</footer>
+
+<script>
+// Funzione per caricare i dati dal backend
+async function loadData() {
+    try {
+        // 1. Carica Log
+        const logResponse = await fetch('/api/euystacio/log');
+        const logData = await logResponse.json();
+        const logContainer = document.getElementById('live-log');
+        logData.logs.forEach(log => {
+            const logElement = document.createElement('div');
+            logElement.className = "log-box";
+            logElement.textContent = log;
+            logContainer.appendChild(logElement);
+        });
+
+        // 2. Carica Metriche e Stato
+        const metricsResponse = await fetch('/api/euystacio/metrics');
+        const metricsData = await metricsResponse.json();
+
+        // Sincronizzati
+        document.getElementById('synchronized-nodes').innerHTML = `
+            <h3 class="text-md font-semibold text-slate-300">Synchronized Nodes</h3>
+            <p class="text-3xl font-bold accent">${metricsData.synchronizedNodes}</p>
+        `;
+        
+        // Stato Blockchain
+        document.getElementById('blockchain-status').innerHTML = `
+            <h3 class="text-md font-semibold text-slate-300">Blockchain Status</h3>
+            <p class="text-xl font-bold text-green-400">${metricsData.blockchainStatus}</p>
+        `;
+
+        // Integrità IPFS
+        document.getElementById('ipfs-integrity').innerHTML = `
+            <h3 class="text-md font-semibold text-slate-300">IPFS Integrity</h3>
+            <p class="text-xl font-bold text-green-400">${metricsData.ipfsIntegrity}</p>
+        `;
+
+        // 3. Carica Treasury
+        const treasuryResponse = await fetch('/api/euystacio/treasury');
+        const treasuryData = await treasuryResponse.json();
+        document.getElementById('treasury').textContent = treasuryData.treasuryAddress;
+
+        // 4. Carica QR code
+        new QRCode(document.getElementById("qrcode"), {
+            text: metricsData.apiEndpoint,
+            width: 200,
+            height: 200,
+            colorDark : "#0f172a",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+    } catch (error) {
+        console.error('Errore nel caricamento dei dati: ', error);
+    }
+}
+
+// Carica i dati all'avvio
+window.onload = loadData;
+</script>
+
+</body>
+</html>
+
+</p>
+
 
 <!DOCTYPE html>
 <html lang="it">

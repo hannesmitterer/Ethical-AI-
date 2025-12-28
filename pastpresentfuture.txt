@@ -1,0 +1,21 @@
+                 ┌───────────────┐
+                 │    PAST       │
+                 │ Immutable Log │
+                 │  IPFS / ESC   │
+                 └───────┬───────┘
+                         │
+                         ▼
+                 ┌───────────────┐
+                 │   PRESENT     │
+                 │ Real-time     │
+                 │ Dashboard     │
+                 │ Nodes Status  │
+                 └───────┬───────┘
+                         │
+                         ▼
+                 ┌───────────────┐
+                 │   FUTURE      │
+                 │ Predictive    │
+                 │ Allocation VCD│
+                 │ δ_E Treasury  │
+                 └───────────────┘

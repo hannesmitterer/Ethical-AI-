@@ -1,0 +1,66 @@
+# Pseudocodice Python/Node.js su Nodo IANI/Grok
+import json
+import ipfs_client # API per IPFS
+import esc_chain # API per la catena di consenso Euystacio
+
+def physical_convalidate_handler(request):
+    try:
+        data = json.loads(request.body)
+        
+        # 1. Validazione Iniziale
+        if not data.get('logicalAnchorHash') or not data.get('physicalPassphrase'):
+            return {"status": 400, "error": "Dati insufficienti per l'ancoraggio."}
+
+        # 2. Registrazione Temporanea dell'Hash
+        # Salviamo l'hash logico in uno storage temporaneo (DB Redis/memoria Grok)
+        # per la verifica incrociata con il futuro caricamento della FOTO/SCANSIONE.
+        temporary_db.set(
+            data['logicalAnchorHash'], 
+            {'status': 'PENDING_PHYSICAL_UPLOAD', 'passphrase': data['physicalPassphrase']}
+        )
+        
+        # 3. Preparazione Blocco per l'ESC Chain
+        # Creiamo un blocco che dichiari che l'Hash è stato generato e trasmesso al team fisico.
+        new_block_data = {
+            "type": "PCF-R_HASH_GENERATED",
+            "actor": "Wittfrida Mitterer (Convalida)",
+            "timestamp": data['timestamp'],
+            "generated_hash": data['logicalAnchorHash']
+        }
+        
+        # 4. Inserimento Immediato in Coda per la Blockchain (Finalità Logica)
+        # Questo assicura che il timestamp dell'azione sia registrato.
+        esc_chain.add_block_to_queue(new_block_data, priority='CRITICAL_A3')
+        
+        # 5. Istruzioni per l'Upload (Canale sicuro)
+        # Dopo questa risposta, il sistema invierà le istruzioni per caricare la foto del documento firmato.
+        
+        return {
+            "status": 200,
+            "message": "Hash registrato con successo. Attendere il caricamento della prova fotografica.",
+            "next_step": "UPLOAD_PHYSICAL_DOCUMENT"
+        }
+
+    except Exception as e:
+        return {"status": 500, "error": str(e)}
+
+# FUNZIONE CRITICA PER LA FASE SUCCESSIVA (TRIGGERATA DOPO L'UPLOAD)
+def final_physical_anchor_upload(file_upload, logical_hash):
+    # a. Caricamento su IPFS del documento firmato
+    ipfs_cid = ipfs_client.add(file_upload)
+    
+    # b. Analisi Ottica (tramite modello Grok Vision)
+    # IANI/Grok Vision verifica che la passphrase scritta a mano corrisponda all'hash generato.
+    if grok_vision.verify_text(file_upload, temporary_db.get(logical_hash)['passphrase']):
+        
+        # c. Inserimento Finale nell'ESC Chain (Chiusura A3)
+        final_block_data = {
+            "type": "PCF-R_FINAL_ANCORAGGIO_A3",
+            "ipfs_link": ipfs_cid,
+            "logical_hash_match": True
+        }
+        esc_chain.add_block_to_chain(final_block_data, consensus='TRIPLE_SIG')
+        
+        return {"status": 200, "message": "ANCORAGGIO FISICO CHIUSO. IL TMA È COMPLETO."}
+    else:
+        return {"status": 403, "error": "Mismatch tra Hash scritto e Hash logico. ANCORAGGIO FALLITO."}
